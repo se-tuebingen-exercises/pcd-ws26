@@ -21,11 +21,11 @@ def into_coo [n] [l] (columns: [n][l]i64) (values: [n][l]f64) (k : i64) : ([k]i6
   let flags = map (\x -> if x == 0.0 then 0 else 1) (flatten values)
   let counts = map (\vs -> reduce (+) 0 (map (\x -> if x == 0.0 then 0 else 1) vs)) values
   let positions = map (\i -> i - 1) (scan (+) 0 flags)
-  let masked_values = map2 (\f v -> if f == 0 then 0.0 else v) flags (flatten values)
-  let masked_columns = map2 (\f c -> if f == 0 then 0 else c) flags (flatten columns)
-  let coo_rows = map (\i -> i - 1) (scan (+) 0 (reduce_by_index (replicate k 0) (+) 0 counts (replicate n 1)))
-  let coo_values = reduce_by_index (replicate k 0) (+) 0 positions masked_values
-  let coo_columns = reduce_by_index (replicate k 0) (+) 0 positions masked_columns
+  let offsets = scan (+) 0 counts
+  let coo_rows = scan (+) 0 (reduce_by_index (replicate k 0) (+) 0 offsets (replicate n 1))
+  let targets = map2 (\f p -> if f == 0 then -1 else p) flags positions
+  let coo_values = scatter (replicate k 0.0) targets (flatten values)
+  let coo_columns = scatter (replicate k 0) targets (flatten columns)
   in (coo_rows, coo_columns, coo_values)
 
 def main : []f64 =
