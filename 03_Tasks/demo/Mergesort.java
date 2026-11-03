@@ -6,12 +6,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ExecutionException;
 
 class Mergesort {
-
     public static int[] mergesort(int[] array, ExecutorService executor)
         throws InterruptedException, ExecutionException {
 
-        if (array.length <= 1000) {
-            Arrays.sort(array);
+        if (array.length <= 1) {
             return array;
         }
 
@@ -52,11 +50,11 @@ class Mergesort {
     }
 
     public static int[] randomArray() {
-        int[] array = new int[10000000];
+        int[] array = new int[1000000];
         Random random = new Random();
 
         for (int i = 0; i < array.length; i++) {
-            array[i] = random.nextInt(10000000);
+            array[i] = random.nextInt(1000000);
         }
         return array;
     }
@@ -68,8 +66,7 @@ class Mergesort {
         int[] array = randomArray();
 
         long startTime = System.nanoTime();
-        int[] sorted = array;
-        Arrays.sort(array);
+        int[] sorted = mergesort(array, executor);
         long endTime = System.nanoTime();
 
         double duration = (endTime - startTime) / 1_000_000.0;

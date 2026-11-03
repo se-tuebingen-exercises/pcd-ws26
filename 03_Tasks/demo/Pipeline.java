@@ -9,8 +9,7 @@ public class Pipeline {
         executor.execute(() -> transformer(queue1, queue2));
         executor.execute(() -> consumer(queue2));
         executor.shutdown();
-        executor.execute(() -> System.out.println("hallo"));
-        executor.awaitTermination(10, TimeUnit.SECONDS);
+        executor.awaitTermination(1, TimeUnit.SECONDS);
     }
 
     static void producer(BlockingQueue<Integer> queue) {
@@ -33,7 +32,7 @@ public class Pipeline {
 
     static void consumer(BlockingQueue<Integer> queue) {
         try {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 5; i++) {
                 System.out.println(queue.take());
             }
         } catch (InterruptedException e) {

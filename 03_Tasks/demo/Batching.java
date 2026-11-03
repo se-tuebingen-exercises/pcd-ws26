@@ -20,7 +20,9 @@ public class Batching {
             for (int i = 0; i < 50; i++) {
                 queue1.put(i);
             }
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     static void transformer(BlockingQueue<Integer> queue1, BlockingQueue<List<Integer>> queue2) {
@@ -33,7 +35,9 @@ public class Batching {
                 List<Integer> results = items.parallelStream().map(x -> x + 1).toList();
                 queue2.put(results);
             }
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     static void consumer(BlockingQueue<List<Integer>> queue3) {
@@ -41,7 +45,9 @@ public class Batching {
             for (int batch = 0; batch < 5; batch++) {
                 System.out.println(queue3.take());
             }
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
 

@@ -12,26 +12,32 @@ public class Sparse {
     }
 
     public static void main(String[] args) {
-        CSR matrix = generateMatrix(100000);
-        double[] vector = generateVector(100000);
+        CSR matrix = new CSR();
+        matrix.rows = new int[]{0, 2, 2, 3, 7};
+        matrix.columns = new int[]{0, 1, 0, 0, 1, 2, 3};
+        matrix.values = new double[]{10.0, 11.0, 30.0, 40.0, 41.0, 42.0, 43.0};
+
+        double[] vector = {1.0, 2.0, 3.0, 4.0};
 
         long start = System.nanoTime();
         double[] result = multiply(matrix, vector);
         long time = System.nanoTime() - start;
 
         System.out.println(time / 1e6 + " ms");
-        // System.out.println(java.util.Arrays.toString(result));
+        System.out.println(java.util.Arrays.toString(result));
     }
 
     public static double[] multiply(CSR matrix, double[] vector) {
         double[] result = new double[matrix.rows.length - 1];
-        IntStream.range(0, matrix.rows.length - 1).parallel().forEach(i -> {
-            double sum = 0.0;
-            for (int j = matrix.rows[i]; j < matrix.rows[i + 1]; j++) {
-                sum += matrix.values[j] * vector[matrix.columns[j]];
-            }
-            result[i] = sum;
-        });
+        IntStream.range(0, matrix.rows.length - 1)
+            .parallel()
+            .forEach(i -> {
+                double sum = 0.0;
+                for (int j = matrix.rows[i]; j < matrix.rows[i + 1]; j++) {
+                    sum += matrix.values[j] * vector[matrix.columns[j]];
+                }
+                result[i] = sum;
+            });
         return result;
     }
 

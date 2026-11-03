@@ -5,14 +5,13 @@ public class Balancing {
         BlockingQueue<Integer> queue2 = new ArrayBlockingQueue<>(5);
         var executor = Executors.newVirtualThreadPerTaskExecutor();
         executor.execute(() -> producer(queue1));
-        executor.execute(() -> transformer(queue1, queue2));
-        executor.execute(() -> transformer(queue1, queue2));
-        executor.execute(() -> transformer(queue1, queue2));
+        for (int i = 0; i < 3; i++) {
+            executor.execute(() -> transformer(queue1, queue2));
+        }
         executor.execute(() -> consumer(queue2));
         executor.shutdown();
         executor.awaitTermination(2, TimeUnit.SECONDS);
     }
-
     static void producer(BlockingQueue<Integer> queue1) {
         try {
             for (int i = 0; i < 15; i++) {
@@ -20,7 +19,6 @@ public class Balancing {
             }
         } catch (InterruptedException e) {}
     }
-
     static void transformer(BlockingQueue<Integer> queue1, BlockingQueue<Integer> queue2) {
         try {
             for (int i = 0; i < 5; i++) {
@@ -28,7 +26,6 @@ public class Balancing {
             }
         } catch (InterruptedException e) {}
     }
-
     static void consumer(BlockingQueue<Integer> queue2) {
         try {
             for (int i = 0; i < 15; i++) {
